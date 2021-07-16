@@ -1,0 +1,43 @@
+import pandas as pd
+import numpy as np
+import sqlite3
+import csv
+
+
+def create_table(table_name, columns_name, columns_quant, file_loc, head_pass):
+    conn = sqlite3.connect(r'C:\Users\User\Documents\Учеба\Diploma\Data\New_db.db')
+    cur = conn.cursor()
+    cur.execute('''DROP TABLE IF EXISTS %s''' % (table_name))
+    cur.execute('''CREATE TABLE %s (%s)'''%(table_name, columns_name) )
+    with open(r'%s' % (file_loc), 'r') as fin_1:
+        dr = csv.reader(fin_1)
+        if head_pass == True:
+            next(dr, None)  # пропускаем заголовок
+        else:
+            pass
+        dataset = [(i) for i in dr]
+    for count, i in enumerate(dataset):
+        dataset[count] = tuple(i)
+    dataset = tuple(dataset)
+
+    columns_count = ""
+    for i in range(columns_quant):
+        if i < (columns_quant - 1):
+            columns_count += '?, '
+        else: columns_count += '?'
+        print(dataset)
+    # cur.executemany("INSERT INTO %s VALUES (%s);" % (table_name, columns_count), dataset)
+    conn.commit()
+    conn.close()
+
+
+
+# conn = sqlite3.connect(r'C:\Users\User\Documents\Учеба\Diploma\Data/New_db.db')
+# cur = conn.cursor()
+# cur.execute('''SELECT * FROM infected''')
+# result = cur.fetchall()
+#
+# a = pd.DataFrame(result)
+# print(a)
+
+create_table('train', 'train_id, car_id', 2,  r'C:\Users\User\Documents\Учеба\Diploma\Data\Dict\train.csv', False)
